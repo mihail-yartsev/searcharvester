@@ -20,11 +20,13 @@ RUN uv pip install --no-cache-dir --python /opt/hermes/.venv/bin/python3 \
 RUN python3 - <<'PY'
 path = '/opt/hermes/run_agent.py'
 src = open(path, encoding='utf-8').read()
-old = '_use_streaming = True\n                    # Provider signaled'
-new = '_use_streaming = False  # patched: vLLM streaming tool_call bug workaround (vllm#27641)\n                    # Provider signaled'
+# New hermes uses _disable_streaming attr; patch the default from False to True
+# to keep streaming off for vLLM gpt-oss tool-call corruption (vllm#27641)
+old = 'prefer_stream=not bool(getattr(self, "_disable_streaming", False))'
+new = 'prefer_stream=not bool(getattr(self, "_disable_streaming", True))  # patched: vLLM streaming tool_call bug (vllm#27641)'
 assert old in src, 'streaming toggle anchor not found — upstream changed; update the patch'
 open(path, 'w', encoding='utf-8').write(src.replace(old, new))
-print('patched _use_streaming = False')
+print('patched _disable_streaming default = True')
 PY
 
 RUN mkdir -p /app && chown hermes:hermes /app

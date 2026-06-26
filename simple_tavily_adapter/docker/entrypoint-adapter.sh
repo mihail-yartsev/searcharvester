@@ -27,7 +27,7 @@ if [ "$(id -u)" = "0" ]; then
         chown -R hermes:hermes /srv/searxng-docker/jobs 2>/dev/null || true
     fi
 
-    exec gosu hermes "$0" "$@"
+    exec /command/s6-setuidgid hermes "$0" "$@"
 fi
 
 # Running as hermes from here on.
