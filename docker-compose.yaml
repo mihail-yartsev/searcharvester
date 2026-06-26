@@ -68,6 +68,10 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      # Set to 1 when pointing at a vLLM backend to disable streaming and
+      # avoid tool-call corruption (vllm#27641). Leave unset for Anthropic /
+      # OpenRouter / other providers that stream tool calls correctly.
+      - HERMES_DISABLE_STREAMING=${HERMES_DISABLE_STREAMING:-0}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     depends_on:
